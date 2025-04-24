@@ -1,0 +1,25 @@
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url)
+
+    if (url.pathname.includes("NC__Login")) {
+      const response = await fetch(request)
+      const newHeaders = new Headers(response.headers)
+
+      // Add canonical header
+      newHeaders.set(
+        "Link",
+        `<https://my.aaaa.org/NC__Login>; rel="canonical"`
+      )
+
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders,
+      })
+    }
+
+    // For all other requests, just fetch normally
+    return fetch(request)
+  }
+}
